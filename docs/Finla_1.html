@@ -106,20 +106,24 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
 <!-- main -->
 
-<div class="bslib-grid-item html-fill-item bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, max-content); grid-auto-columns: minmax(0, 1fr);">
-<div class="card bslib-card html-fill-container" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<p>#‘요일, 시간에 따른 평균속력 시각화’ ’’’{python} import pandas as pd import numpy as np import plotly.express as px</p>
+<p>#기말고사 1-1, 1-2 # 시각화 {orientation=“columns” scrolling=“true”} ## Column {width=50%}</p>
+<p>’’‘{python} #| title: ’요일, 시간에 따른 평균속력 시각화’ import pandas as pd import numpy as np import plotly.express as px</p>
 <p>df = pd.read_csv(“https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv”).assign( log_trip_duration=lambda df: np.log(df.trip_duration), pickup_datetime=lambda df: df.pickup_datetime.apply(pd.to_datetime), dropoff_datetime=lambda df: df.dropoff_datetime.apply(pd.to_datetime), dist=lambda df: np.sqrt((df.pickup_latitude - df.dropoff_latitude) ** 2 + (df.pickup_longitude - df.dropoff_longitude) ** 2), vendor_id=lambda df: df.vendor_id.map({1: ‘A’, 2: ‘B’}) ).assign( speed=lambda df: df.dist / df.trip_duration, pickup_hour=lambda df: df.pickup_datetime.dt.hour, dropoff_hour=lambda df: df.dropoff_datetime.dt.hour, dayofweek=lambda df: df.pickup_datetime.dt.dayofweek ) day_mapping = {0: ‘월’, 1: ‘화’, 2: ‘수’, 3: ‘목’, 4: ‘금’, 5: ‘토’, 6: ‘일’} df[‘day’] = df[‘dayofweek’].map(day_mapping)</p>
 <p>average_speed = df.groupby([‘day’, ‘pickup_hour’])[‘speed’].mean().reset_index()</p>
 <p>fig = px.density_heatmap( data_frame=average_speed, x=‘pickup_hour’, y=‘day’, z=‘speed’, nbinsx=24, nbinsy=7, labels={‘pickup_hour’: ‘pick up 시간’, ‘speed’: ‘Average Speed’}, category_orders={‘day’: [‘일’, ‘토’, ‘금’, ‘목’, ‘수’, ‘화’, ‘월’]}, color_continuous_scale=‘Plasma’, height=300, title=‘요일, 시간에 따른 평균속력 시각화’ )</p>
 <p>fig.show() ’’’</p>
-<p>#요일에 따른 평균이동거리 시각화 ’’‘{python} day_mapping = {0: ’월’, 1: ‘화’, 2: ‘수’, 3: ‘목’, 4: ‘금’, 5: ‘토’, 6: ‘일’} df[‘day’] = df[‘dayofweek’].map(day_mapping)</p>
+<div class="bslib-grid-item html-fill-item bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, max-content); grid-auto-columns: minmax(0, 1fr);">
+<div class="bslib-grid" data-width="50%" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card bslib-card html-fill-container" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<p>’’‘{python} #| title: ’요일에 따른 평균이동거리 시각화’ day_mapping = {0: ‘월’, 1: ‘화’, 2: ‘수’, 3: ‘목’, 4: ‘금’, 5: ‘토’, 6: ‘일’} df[‘day’] = df[‘dayofweek’].map(day_mapping)</p>
 <p>average_distance = df.groupby([‘day’, ‘pickup_hour’])[‘dist’].mean().reset_index()</p>
 <p>average_distance = average_distance.sort_values([‘day’, ‘pickup_hour’])</p>
 <p>fig = px.density_heatmap( data_frame=average_distance, x=‘pickup_hour’, y=‘day’, z=‘dist’, nbinsx=24, nbinsy=7, labels={‘pickup_hour’: ‘pick up 시간’, ‘dist’: ‘Average Dist’}, category_orders={‘day’: [‘일’, ‘토’, ‘금’, ‘목’, ‘수’, ‘화’, ‘월’]}, # Reversed order color_continuous_scale=‘Plasma’, # Change color scale to ‘Plasma’ height=300, title=‘요일에 따른 평균이동거리 시각화’ )</p>
 <p>fig.show() ’’’</p>
-<p>#속력별 경로 시각화 ’’’{python} import pandas as pd import numpy as np import plotly.express as px</p>
+<p>#기말고사 1-3</p>
+<p>’’‘{python} #| title: ’속력별 경로 시각화’ import pandas as pd import numpy as np import plotly.express as px</p>
 <p>df = pd.read_csv(“https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv”).assign( log_trip_duration = lambda df: np.log(df.trip_duration), pickup_datetime = lambda df: df.pickup_datetime.apply(pd.to_datetime), dropoff_datetime = lambda df: df.dropoff_datetime.apply(pd.to_datetime), dist = lambda df: np.sqrt((df.pickup_latitude-df.dropoff_latitude)<strong>2 + (df.pickup_longitude-df.dropoff_longitude)</strong>2), #—# vendor_id = lambda df: df.vendor_id.map({1:‘A’,2:‘B’}) ).assign( speed = lambda df: df.dist / df.trip_duration, pickup_hour = lambda df: df.pickup_datetime.dt.hour, dropoff_hour = lambda df: df.dropoff_datetime.dt.hour, dayofweek = lambda df: df.pickup_datetime.dt.dayofweek ) df_small = df[::100].reset_index(drop=True) # Divide speed into four sections using quartiles df_small[‘speed_category’] = pd.qcut(df_small[‘speed’], 4, labels=[‘Very slow’, ‘A bit slow’, ‘A bit fast’, ‘Very fast’])</p>
 <p>fig = px.line_mapbox( df_small, lat=‘pickup_latitude’, lon=‘pickup_longitude’, line_group=‘id’, color=‘speed_category’, center={‘lat’: 40.7322, ‘lon’: -73.9052}, mapbox_style=‘carto-positron’, zoom=11 )</p>
 <p>scatter_data = px.scatter_mapbox( df_small, lat=‘pickup_latitude’, lon=‘pickup_longitude’, size=‘passenger_count’, size_max=10, color=‘speed_category’, mapbox_style=‘carto-positron’, zoom=10 ).data</p>
@@ -140,11 +144,9 @@ ul.task-list li input[type="checkbox"] {
     <span class="bslib-full-screen-enter badge rounded-pill">
         <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
     </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div id="3ade8a4a-fb1d-4a6c-8409-ac45482d5fc9" class="hidden">
 
-
-<div id="3ade8a4a-fb1d-4a6c-8409-ac45482d5fc9" class="hidden">
-
+</div>
 </div>
 </div>
 
